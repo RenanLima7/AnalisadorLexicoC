@@ -1,27 +1,26 @@
+import random
+
 # Definição dos tokens
 tokens = (
+    'PALAVRA_CHAVE',
     'IDENTIFICADOR',
     'NUMERO',
-    'MAIS',
-    'MENOS',
-    'MULTIPLICACAO',
-    'DIVISAO',
-    'LPAREN',
-    'RPAREN',
-    'PONTOVIRGULA',
+    'OPERADOR',
+    'DELIMITADOR',
+    'ATRIBUICAO',
 )
 
-# Palavras-chave da linguagem C
-palavras_chave = [
-    'int', 'float', 'char', 'if', 'else', 'for', 'while', 'do', 'return'
-]
 
 # Operadores e delimitadores
 operadores = ['+', '-', '*', '/']
 operadores_logicos = ['==', '!=', '>=', '<=', '&&', '||']
 delimitadores = ['(', ')', ';', '{', '}']
 
-# Função para separar o código em tokens
+# Palavras-chave da linguagem C
+palavras_chave = [
+    'int', 'float', 'char', 'if', 'else', 'for', 'while', 'do', 'return'
+]
+
 def lexer(codigo):
     codigo = codigo.replace('\n', ' ')  # Remover quebras de linha
     tokens = []
@@ -107,20 +106,57 @@ def parser(tokens):
             else:
                 print("Erro de sintaxe: ')' esperado")
 
+
+# Gramática BNF
+gramatica_bnf = {
+    "<programa>": ["<declaracoes>"],
+    "<declaracoes>": ["<declaracao> <declaracoes>", "<declaracao>"],
+    "<declaracao>": ["<tipo> <identificador> <atribuicao> <expressao> <DELIMITADOR>"],
+    "<tipo>": ["PALAVRA_CHAVE"],
+    "<identificador>": ["IDENTIFICADOR"],
+    "<atribuicao>": ["ATRIBUICAO <expressao>", ""],
+    "<expressao>": ["<termo> <expressao_restante>"],
+    "<expressao_restante>": ["<operador> <termo> <expressao_restante>", ""],
+    "<termo>": ["<fator> <termo_restante>"],
+    "<termo_restante>": ["<operador> <fator> <termo_restante>", ""],
+    "<fator>": ["IDENTIFICADOR", "NUMERO", "( <expressao> )"],
+    "<operador>": ["OPERADOR"],
+    "<DELIMITADOR>": ["DELIMITADOR"]
+}
+
+# Função para gerar a derivação da gramática BNF
+def gerar_derivacao(nao_terminal):
+    if nao_terminal not in gramatica_bnf:
+        return nao_terminal
+
+    producoes = gramatica_bnf[nao_terminal]
+    derivacao = ''
+    for simbolo in producoes:
+        if simbolo.startswith("<"):
+            derivacao += gerar_derivacao(simbolo) + ' '
+        else:
+            derivacao += simbolo + ' '
+    return derivacao.strip()
+
+def visualizarTokens(tokens):
+    for token in tokens:
+        print(token, "\n")
+
 # Exemplo de uso
 codigo_exemplo = '''
-float teste() {
+int main() {
     int a = 10;
     int b = 5;
     int c = a + b;
-    return c;
+    return c
 }
 '''
 
 resultado = lexer(codigo_exemplo)
-print(resultado)
+visualizarTokens(resultado)
 
-
-
-
-
+# Geração da derivação da gramática BNF
+derivacao = gerar_derivacao("<programa>")
+print("Derivacao da gramatica BNF:")
+for linha in derivacao.split("<"):
+        print(linha.replace(">", ""))
