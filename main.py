@@ -130,9 +130,8 @@ def gerar_derivacao(nao_terminal):
         return nao_terminal
 
     producoes = gramatica_bnf[nao_terminal]
-    producao_escolhida = random.choice(producoes)
     derivacao = ''
-    for simbolo in producao_escolhida.split():
+    for simbolo in producoes:
         if simbolo.startswith("<"):
             derivacao += gerar_derivacao(simbolo) + ' '
         else:
@@ -160,4 +159,4 @@ visualizarTokens(resultado)
 derivacao = gerar_derivacao("<programa>")
 print("Derivação da gramática BNF:")
 for linha in derivacao.split("<"):
-    print("<" + linha.strip())
+        print(linha.replace(">", ""))
