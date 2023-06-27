@@ -141,7 +141,7 @@ def gerar_derivacao(nao_terminal):
 
 def visualizarTokens(tokens):
     for token in tokens:
-        print(token, " \n")
+        print(token, "\n")
 
 # Exemplo de uso
 codigo_exemplo = '''
@@ -158,6 +158,6 @@ visualizarTokens(resultado)
 
 # Geração da derivação da gramática BNF
 derivacao = gerar_derivacao("<programa>")
-print("Derivação da gramática BNF:")
+print("Derivacao da gramatica BNF:")
 for linha in derivacao.split("<"):
     print("<" + linha.strip())
